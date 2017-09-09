@@ -4,19 +4,12 @@ let list = document.getElementById("list");
 let outerDiv = document.getElementById("outer-div");
 let innerDiv = document.getElementById("inner-div");
 let clockTime = document.getElementById("clock");
+let form = document.getElementById("formElement");
 
-//event listner for add
-adder.addEventListener("click", (event) => {
+// event listener for user input
+form.addEventListener("submit", (event) => {
   event.preventDefault();
   addEvent(event);
-});
-
-//event listner for enter key because not using Form element
-inputValue.addEventListener("keyup", (event) => {
-  event.preventDefault();
-  if (event.keyCode == 13) {
-    adder.click();
-  }
 });
 
 //moves background up or down
@@ -24,8 +17,8 @@ let moveDiv = (event) => {
   let fromAdd = event.currentTarget;
   let fromRemove = event.target;
   let marginVal;
-  if (list.childNodes.length > 3) {
-    if (fromAdd.className == "addBtn") {
+  if (list.childNodes.length > 6) {
+    if (fromAdd.className == "formElement") {
       marginVal = parseInt(innerDiv.style.height);
       marginVal += 40;
       innerDiv.style.height = marginVal + "px";
