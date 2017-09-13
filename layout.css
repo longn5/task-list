@@ -1,5 +1,10 @@
+html body {
+  background-color: lightblue;
+}
+
 .outer-div{
   margin: auto;
+  margin-top: 5vw;
   text-align: center;
   width: 1000px;
   height: 300px;
@@ -28,13 +33,14 @@
 .inner-inner-div{
   margin-right: 60%;
   /*margin-top: 2%;*/
-  position:absolute;
+  padding-left: 25px;
 }
 
 .inner-inner-div h1 {
   font-family: 'Baloo Bhaijaan', cursive;
   color: white;
   padding-top: 50px;
+
 }
 
 #addBtn{
@@ -49,7 +55,9 @@ img{
   height: 100%;
 }
 
-
+.formElement{
+  padding-left: 25px;
+}
 
 #inputText{
   width: 300px;
@@ -58,12 +66,23 @@ img{
 
 .list-container{
   margin: auto;
-  width: 400px;
+  display: flex;
+}
+
+.list-div{
+  width: 475px;
+  display: inline-block;
+}
+
+.clock-div{
+  display: inline-block;
+  padding-left: 35px;
+  padding-top: 110px;
 }
 
 #list{
   padding: 25px 0px 0px 10px;
-
+  width: 475px;
 }
 
 #list li {
@@ -71,7 +90,7 @@ img{
   color: white;
   font-size: 25px;
   background-color: #40AAD3;
-  width: 400px;
+  width: 475px;
   list-style-type: none;
   margin: 0px;
   text-align: left;
@@ -87,11 +106,35 @@ li button {
   font-size: 20px;
 }
 
+.btn{
+  margin-right: 10px;
+}
+
 #clock{
-  position: absolute;
   color: white;
+  z-index: 1;
+  margin-right: 100px;
+}
+#screen{
+  width: 150px;
+  height: 80px;
   z-index: 5;
-  padding-left: 525px;
-  padding-top: 65px;
-  float: right;
+}
+
+.youtube{
+  width: 150px;
+  height: 80px;
+  margin-right: 70px;
+}
+
+#mathBook{
+  margin-top: 62px;
+  width: 23px;
+  height: 65px;
+}
+
+.math{
+  margin-top: 62px;
+  width: 23px;
+  height: 65px;
 }

@@ -24,12 +24,12 @@ let moveDiv = (event) => {
       innerDiv.style.height = marginVal + "px";
     }
 
-  if (fromRemove.className == "btn btn-danger") {
-    marginVal = parseInt(innerDiv.style.height);
-    marginVal -= 40;
-    innerDiv.style.height = marginVal + "px";
+    if (fromRemove.className == "btn btn-danger") {
+      marginVal = parseInt(innerDiv.style.height);
+      marginVal -= 40;
+      innerDiv.style.height = marginVal + "px";
+    }
   }
-}
 }
 
 //create list item and check mark elements
@@ -39,7 +39,8 @@ let addEvent = (event) => {
     //create main list item
     let newTask = document.createElement("li");
     newTask.style.listStyleType = "none";
-    let newText = document.createTextNode(inputValue.value);
+    let span = document.createElement("span");
+    span.textContent = inputValue.value;
 
     //add class to checkMark and make hidden until list item is clicked on
     let checkMark = document.createElement("span");
@@ -47,14 +48,15 @@ let addEvent = (event) => {
     checkMark.style.visibility = "hidden";
 
     //add check mark and list item to list
-    newTask.appendChild(newText);
+    newTask.appendChild(span);
     list.appendChild(checkMark);
     list.appendChild(newTask);
 
     //clear input field after list item is added to list
     inputValue.value = "";
-    //add remove button to list item
-    remove(newTask);
+    //add edit and remove button to list item
+    removeBtn(newTask);
+    editBtn(newTask);
     //move background if necessary
     moveDiv(event);
   } else {
@@ -63,42 +65,88 @@ let addEvent = (event) => {
 };
 
 //create new remove button for list item
-let remove = (newTask) => {
+let removeBtn = (newTask) => {
   let removeBtn = document.createElement("button");
   removeBtn.className = "btn btn-danger";
-  removeBtn.textContent = "remove";
-  //removeBtn.style.marginLeft = "10em";
+  removeBtn.textContent = "X";
   newTask.appendChild(removeBtn);
+};
+
+//create new edit button for list item
+let editBtn = (newTask) => {
+  let editBtn = document.createElement("button");
+  editBtn.className = "btn btn-warning";
+  editBtn.textContent = "edit";
+  newTask.appendChild(editBtn);
+  return editBtn;
+};
+
+//create save button for list item
+let saveBtn = (liItem) => {
+  let saveBtn = document.createElement("button");
+  saveBtn.className = "btn btn-success";
+  saveBtn.textContent = "save";
+  liItem.appendChild(saveBtn);
+  return saveBtn;
 };
 
 //Event listner for remove or strikethrough on list item
 list.addEventListener("click", (event) => {
   event.preventDefault();
+
   if (event.target.tagName == "BUTTON") {
+
+    let li = event.target.parentNode;
+    let ul = li.parentNode;
+
     if (event.target.className == "btn btn-danger") {
       moveDiv(event);
-      let li = event.target.parentNode;
-      let ul = li.parentNode;
+
       let checkMark = event.target.parentNode.previousSibling;
 
       ul.removeChild(li);
-      ul.removeChild(checkMark);
+      ul.removeChild(checkMark//lets user edit a list item
+      );
 
+    } else if (event.target.className == "btn btn-warning") {
+      let span = li.firstElementChild;
+      //create input text field and sets style
+      let input = document.createElement("input");
+      input.type = "text";
+      input.value = span.textContent;
+      input.style.background = "#40AAD3";
+      input.style.border = "none";
+      input.style.outlline = "none";
+      const editBtn = event.target;
+      li.insertBefore(input, span);
+      li.removeChild(span);
+      li.replaceChild(saveBtn(li), editBtn);
+    } else if (event.target.className == "btn btn-success") {
+      let span = document.createElement("span");
+      let input = li.firstElementChild;
+      span.textContent = input.value;
+      li.insertBefore(span, input);
+      li.removeChild(input);
+      const saveBtn = document.getElementsByClassName("btn btn-success")[0];
+      // const editBtn = document.getElementsByClassName("btn btn-warning")[0];
+      li.replaceChild(editBtn(li), saveBtn);
     }
   }
-  if (event.target.tagName == "LI") {
+
+  if (event.target.tagName == "SPAN") {
     let strike = event.target;
     if (strike.style.textDecoration === "none" || strike.style.textDecoration === "") {
       strike.style.textDecoration = "line-through";
-      strike.previousSibling.style.visibility = "visible";
+      strike.parentNode.previousSibling.style.visibility = "visible";
     } else {
       strike.style.textDecoration = "none";
-      strike.previousSibling.style.visibility = "hidden";
+      strike.parentNode.previousSibling.style.visibility = "hidden";
     }
   }
 });
 
-let clock = () =>{
+//create and load a digial clock
+let clock = () => {
   let time = new Date();
   let h = time.getHours();
   let m = time.getMinutes();
@@ -109,8 +157,8 @@ let clock = () =>{
   let t = setTimeout(clock, 500);
 };
 
-let checkTime = (i) =>{
-  if (i<10){
+let checkTime = (i) => {
+  if (i < 10) {
     i = "0" + i;
   }
   return i;
