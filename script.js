@@ -16,18 +16,22 @@ form.addEventListener("submit", (event) => {
 let moveDiv = (event) => {
   let fromAdd = event.currentTarget;
   let fromRemove = event.target;
-  let marginVal;
+  let marginVal = parseInt(innerDiv.style.height);
+
+  //function to move div up or down depending on which button is clicked
+  function modDiv (marginVal){
+    marginVal = marginVal + "px";
+    innerDiv.style.height = marginVal;
+  }
+
   if (list.childNodes.length > 6) {
     if (fromAdd.className == "formElement") {
-      marginVal = parseInt(innerDiv.style.height);
       marginVal += 40;
-      innerDiv.style.height = marginVal + "px";
+      modDiv(marginVal);
     }
-
     if (fromRemove.className == "btn btn-danger") {
-      marginVal = parseInt(innerDiv.style.height);
       marginVal -= 40;
-      innerDiv.style.height = marginVal + "px";
+      modDiv(marginVal);
     }
   }
 }
@@ -36,29 +40,33 @@ let moveDiv = (event) => {
 let addEvent = (event) => {
   if (inputValue.value != "") {
 
+    //function to create elements
+    function createElement(elementName, property, value){
+      const element = document.createElement(elementName);
+      element[property] = value;
+      return element;
+    }
+
     //create main list item
     let newTask = document.createElement("li");
     newTask.style.listStyleType = "none";
-    let span = document.createElement("span");
-    span.textContent = inputValue.value;
+    let span = createElement("span", "textContent", inputValue.value);
 
     //add class to checkMark and make hidden until list item is clicked on
-    let checkMark = document.createElement("span");
-    checkMark.className = "glyphicon glyphicon-ok";
+    let checkMark = createElement("span", "className", "glyphicon glyphicon-ok");
     checkMark.style.visibility = "hidden";
 
     //add check mark and list item to list
     newTask.appendChild(span);
     list.appendChild(checkMark);
     list.appendChild(newTask);
+    inputValue.value = ""; //clear input field after list item is added to list
 
-    //clear input field after list item is added to list
-    inputValue.value = "";
     //add edit and remove button to list item
     removeBtn(newTask);
     editBtn(newTask);
-    //move background if necessary
-    moveDiv(event);
+
+    moveDiv(event);  //move background if necessary
   } else {
     alert("Cannot add empty task!");
   }
@@ -93,23 +101,23 @@ let saveBtn = (liItem) => {
 //Event listner for remove or strikethrough on list item
 list.addEventListener("click", (event) => {
   event.preventDefault();
+  const userClickedOn = event.target;
 
-  if (event.target.tagName == "BUTTON") {
-
-    let li = event.target.parentNode;
+  if (userClickedOn.tagName == "BUTTON") {
+    let li = userClickedOn.parentNode;
     let ul = li.parentNode;
 
-    if (event.target.className == "btn btn-danger") {
+    function removeLI() {
       moveDiv(event);
-
-      let checkMark = event.target.parentNode.previousSibling;
-
+      let checkMark = userClickedOn.parentNode.previousSibling;
       ul.removeChild(li);
-      ul.removeChild(checkMark//lets user edit a list item
+      ul.removeChild(checkMark //lets user edit a list item
       );
+    }
 
-    } else if (event.target.className == "btn btn-warning") {
+    function edit () {
       let span = li.firstElementChild;
+
       //create input text field and sets style
       let input = document.createElement("input");
       input.type = "text";
@@ -117,24 +125,32 @@ list.addEventListener("click", (event) => {
       input.style.background = "#40AAD3";
       input.style.border = "none";
       input.style.outlline = "none";
-      const editBtn = event.target;
+      const editBtn = userClickedOn;
       li.insertBefore(input, span);
       li.removeChild(span);
       li.replaceChild(saveBtn(li), editBtn);
-    } else if (event.target.className == "btn btn-success") {
+    }
+
+    function save () {
       let span = document.createElement("span");
       let input = li.firstElementChild;
       span.textContent = input.value;
       li.insertBefore(span, input);
       li.removeChild(input);
       const saveBtn = document.getElementsByClassName("btn btn-success")[0];
-      // const editBtn = document.getElementsByClassName("btn btn-warning")[0];
       li.replaceChild(editBtn(li), saveBtn);
     }
-  }
 
-  if (event.target.tagName == "SPAN") {
-    let strike = event.target;
+    if (userClickedOn.className == "btn btn-danger") {
+      removeLI();
+    } else if (userClickedOn.className == "btn btn-warning") {
+      edit();
+    } else if (userClickedOn.className == "btn btn-success") {
+      save();
+    }
+  }
+  else (userClickedOn.tagName == "SPAN") {
+    let strike = userClickedOn;
     if (strike.style.textDecoration === "none" || strike.style.textDecoration === "") {
       strike.style.textDecoration = "line-through";
       strike.parentNode.previousSibling.style.visibility = "visible";
