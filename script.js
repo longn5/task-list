@@ -169,6 +169,13 @@ list.addEventListener("click", (event) => {
       ul.removeChild(li);
       ul.removeChild(checkMark);
 
+      for(let i = 0 ; i < listItems.length; i++){
+        if(listItems[i] === li.firstElementChild.textContent){
+          listItems.splice(i,1);
+          localStorage.setItem('listItems', JSON.stringify(listItems));
+        }
+      }
+
     }
 
     function edit() {
