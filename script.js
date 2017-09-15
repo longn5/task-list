@@ -5,11 +5,57 @@ let outerDiv = document.getElementById("outer-div");
 let innerDiv = document.getElementById("inner-div");
 let clockTime = document.getElementById("clock");
 let form = document.getElementById("formElement");
+let listItems = [];
+let needToLoad = false;
+
+/*load list from localStorage
+*if list exist in localStorage then list is copied to listItems variable
+*
+*
+*/
+if(localStorage.getItem("listItems") == null){
+  console.log("List is empty");
+}else{
+  listItems = JSON.parse(localStorage.getItem("listItems"));
+  needToLoad = true;
+  for(let i = 0; i < listItems.length; i++){
+     listFromStorage(listItems[i]);
+  }
+}
+
+function listFromStorage (listItem) {
+  function createElement(elementName, property, value){
+    const element = document.createElement(elementName);
+    element[property] = value;
+    return element;
+  }
+
+  //create main list item
+  let newTask = document.createElement("li");
+  newTask.style.listStyleType = "none";
+  let span = createElement("span", "textContent", listItem);
+
+  //add class to checkMark and make hidden until list item is clicked on
+  let checkMark = createElement("span", "className", "glyphicon glyphicon-ok");
+  checkMark.style.visibility = "hidden";
+
+  //add check mark and list item to list
+  newTask.appendChild(span);
+  list.appendChild(checkMark);
+  list.appendChild(newTask);
+
+  //add edit and remove button to list item
+  removeBtn(newTask);
+  editBtn(newTask);
+
+  // moveDiv(event);  //move background if necessary
+}
+
 
 // event listener for user input
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  addEvent(event);
+  addEvent(event, needToLoad);
 });
 
 //moves background up or down
@@ -38,7 +84,7 @@ let moveDiv = (event) => {
 
 //create list item and check mark elements
 let addEvent = (event) => {
-  if (inputValue.value != "") {
+  if (inputValue.value != "" || needToLoad) {
 
     //function to create elements
     function createElement(elementName, property, value){
@@ -51,6 +97,12 @@ let addEvent = (event) => {
     let newTask = document.createElement("li");
     newTask.style.listStyleType = "none";
     let span = createElement("span", "textContent", inputValue.value);
+    // if(needToLoad){
+    //   // span = createElement("span", "textContent", listItems);
+    // }else{
+    //   // let span = createElement("span", "textContent", inputValue.value);
+    // }
+    saveToStorage(inputValue.value);
 
     //add class to checkMark and make hidden until list item is clicked on
     let checkMark = createElement("span", "className", "glyphicon glyphicon-ok");
@@ -73,7 +125,7 @@ let addEvent = (event) => {
 };
 
 //create new remove button for list item
-let removeBtn = (newTask) => {
+function removeBtn (newTask) {
   let removeBtn = document.createElement("button");
   removeBtn.className = "btn btn-danger";
   removeBtn.textContent = "X";
@@ -81,7 +133,7 @@ let removeBtn = (newTask) => {
 };
 
 //create new edit button for list item
-let editBtn = (newTask) => {
+function editBtn (newTask) {
   let editBtn = document.createElement("button");
   editBtn.className = "btn btn-warning";
   editBtn.textContent = "edit";
@@ -90,7 +142,7 @@ let editBtn = (newTask) => {
 };
 
 //create save button for list item
-let saveBtn = (liItem) => {
+function saveBtn (liItem) {
   let saveBtn = document.createElement("button");
   saveBtn.className = "btn btn-success";
   saveBtn.textContent = "save";
@@ -149,7 +201,7 @@ list.addEventListener("click", (event) => {
       save();
     }
   }
-  else (userClickedOn.tagName == "SPAN") {
+  else if(userClickedOn.tagName == "SPAN") {
     let strike = userClickedOn;
     if (strike.style.textDecoration === "none" || strike.style.textDecoration === "") {
       strike.style.textDecoration = "line-through";
@@ -178,4 +230,13 @@ let checkTime = (i) => {
     i = "0" + i;
   }
   return i;
+};
+
+/*functions to store list items to localStorage
+*/
+let saveToStorage = (value) => {
+
+    listItems.push(value);
+    localStorage.setItem('listItems', JSON.stringify(listItems));
+
 };
