@@ -10,21 +10,20 @@ let needToLoad = false;
 
 /*load list from localStorage
 *if list exist in localStorage then list is copied to listItems variable
-*
-*
 */
-if(localStorage.getItem("listItems") == null){
+if (localStorage.getItem("listItems") == null) {
   console.log("List is empty");
-}else{
+} else {
   listItems = JSON.parse(localStorage.getItem("listItems"));
   needToLoad = true;
-  for(let i = 0; i < listItems.length; i++){
-     listFromStorage(listItems[i]);
+  for (let i = 0; i < listItems.length; i++) {
+    listFromStorage(listItems[i]);
   }
 }
 
-function listFromStorage (listItem) {
-  function createElement(elementName, property, value){
+//function to add localStorage list items to screen
+function listFromStorage(listItem) {
+  function createElement(elementName, property, value) {
     const element = document.createElement(elementName);
     element[property] = value;
     return element;
@@ -48,9 +47,17 @@ function listFromStorage (listItem) {
   removeBtn(newTask);
   editBtn(newTask);
 
-  // moveDiv(event);  //move background if necessary
+  //function to move div up or down depending on which button is clicked
+  let marginVal = parseInt(innerDiv.style.height);
+  function modDiv(marginVal) {
+    marginVal = marginVal + "px";
+    innerDiv.style.height = marginVal;
+  }
+  if (list.childNodes.length > 6) {
+      marginVal += 40;
+      modDiv(marginVal);
+    }
 }
-
 
 // event listener for user input
 form.addEventListener("submit", (event) => {
@@ -58,36 +65,12 @@ form.addEventListener("submit", (event) => {
   addEvent(event, needToLoad);
 });
 
-//moves background up or down
-let moveDiv = (event) => {
-  let fromAdd = event.currentTarget;
-  let fromRemove = event.target;
-  let marginVal = parseInt(innerDiv.style.height);
-
-  //function to move div up or down depending on which button is clicked
-  function modDiv (marginVal){
-    marginVal = marginVal + "px";
-    innerDiv.style.height = marginVal;
-  }
-
-  if (list.childNodes.length > 6) {
-    if (fromAdd.className == "formElement") {
-      marginVal += 40;
-      modDiv(marginVal);
-    }
-    if (fromRemove.className == "btn btn-danger") {
-      marginVal -= 40;
-      modDiv(marginVal);
-    }
-  }
-}
-
 //create list item and check mark elements
 let addEvent = (event) => {
   if (inputValue.value != "" || needToLoad) {
 
     //function to create elements
-    function createElement(elementName, property, value){
+    function createElement(elementName, property, value) {
       const element = document.createElement(elementName);
       element[property] = value;
       return element;
@@ -97,11 +80,6 @@ let addEvent = (event) => {
     let newTask = document.createElement("li");
     newTask.style.listStyleType = "none";
     let span = createElement("span", "textContent", inputValue.value);
-    // if(needToLoad){
-    //   // span = createElement("span", "textContent", listItems);
-    // }else{
-    //   // let span = createElement("span", "textContent", inputValue.value);
-    // }
     saveToStorage(inputValue.value);
 
     //add class to checkMark and make hidden until list item is clicked on
@@ -118,14 +96,39 @@ let addEvent = (event) => {
     removeBtn(newTask);
     editBtn(newTask);
 
-    moveDiv(event);  //move background if necessary
+    moveDiv(event); //move background if necessary
   } else {
     alert("Cannot add empty task!");
   }
 };
 
+//moves background up or down
+function moveDiv (event) {
+
+  let fromAdd = event.currentTarget;
+  let fromRemove = event.target;
+  let marginVal = parseInt(innerDiv.style.height);
+
+  //function to move div up or down depending on which button is clicked
+  function modDiv(marginVal) {
+    marginVal = marginVal + "px";
+    innerDiv.style.height = marginVal;
+  }
+
+  if (list.childNodes.length > 6) {
+    if (fromAdd.className == "formElement") {
+      marginVal += 40;
+      modDiv(marginVal);
+    }
+    if (fromRemove.className == "btn btn-danger") {
+      marginVal -= 40;
+      modDiv(marginVal);
+    }
+  }
+}
+
 //create new remove button for list item
-function removeBtn (newTask) {
+function removeBtn(newTask) {
   let removeBtn = document.createElement("button");
   removeBtn.className = "btn btn-danger";
   removeBtn.textContent = "X";
@@ -133,7 +136,7 @@ function removeBtn (newTask) {
 };
 
 //create new edit button for list item
-function editBtn (newTask) {
+function editBtn(newTask) {
   let editBtn = document.createElement("button");
   editBtn.className = "btn btn-warning";
   editBtn.textContent = "edit";
@@ -142,7 +145,7 @@ function editBtn (newTask) {
 };
 
 //create save button for list item
-function saveBtn (liItem) {
+function saveBtn(liItem) {
   let saveBtn = document.createElement("button");
   saveBtn.className = "btn btn-success";
   saveBtn.textContent = "save";
@@ -167,7 +170,7 @@ list.addEventListener("click", (event) => {
       );
     }
 
-    function edit () {
+    function edit() {
       let span = li.firstElementChild;
 
       //create input text field and sets style
@@ -183,7 +186,7 @@ list.addEventListener("click", (event) => {
       li.replaceChild(saveBtn(li), editBtn);
     }
 
-    function save () {
+    function save() {
       let span = document.createElement("span");
       let input = li.firstElementChild;
       span.textContent = input.value;
@@ -200,8 +203,7 @@ list.addEventListener("click", (event) => {
     } else if (userClickedOn.className == "btn btn-success") {
       save();
     }
-  }
-  else if(userClickedOn.tagName == "SPAN") {
+  } else if (userClickedOn.tagName == "SPAN") {
     let strike = userClickedOn;
     if (strike.style.textDecoration === "none" || strike.style.textDecoration === "") {
       strike.style.textDecoration = "line-through";
@@ -236,7 +238,7 @@ let checkTime = (i) => {
 */
 let saveToStorage = (value) => {
 
-    listItems.push(value);
-    localStorage.setItem('listItems', JSON.stringify(listItems));
+  listItems.push(value);
+  localStorage.setItem('listItems', JSON.stringify(listItems));
 
 };
