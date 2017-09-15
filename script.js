@@ -7,6 +7,7 @@ let clockTime = document.getElementById("clock");
 let form = document.getElementById("formElement");
 let listItems = [];
 let needToLoad = false;
+let indexLocation = 0;
 
 /*load list from localStorage
 *if list exist in localStorage then list is copied to listItems variable
@@ -166,8 +167,8 @@ list.addEventListener("click", (event) => {
       moveDiv(event);
       let checkMark = userClickedOn.parentNode.previousSibling;
       ul.removeChild(li);
-      ul.removeChild(checkMark //lets user edit a list item
-      );
+      ul.removeChild(checkMark);
+
     }
 
     function edit() {
@@ -177,6 +178,16 @@ list.addEventListener("click", (event) => {
       let input = document.createElement("input");
       input.type = "text";
       input.value = span.textContent;
+
+      //removes targeted list item from array when edit button is clicked
+
+      for(let i = 0 ; i < listItems.length; i++){
+        if(listItems[i] === span.textContent){
+          listItems.splice(i,1);
+          indexLocation = i;
+        }
+      }
+
       input.style.background = "#40AAD3";
       input.style.border = "none";
       input.style.outlline = "none";
@@ -186,10 +197,12 @@ list.addEventListener("click", (event) => {
       li.replaceChild(saveBtn(li), editBtn);
     }
 
-    function save() {
+    function save(indexLocation) {
       let span = document.createElement("span");
       let input = li.firstElementChild;
       span.textContent = input.value;
+      listItems.splice(indexLocation, 0, span.textContent); //insert edited list Item into array
+      localStorage.setItem('listItems', JSON.stringify(listItems)); //store newly array replaces old array
       li.insertBefore(span, input);
       li.removeChild(input);
       const saveBtn = document.getElementsByClassName("btn btn-success")[0];
@@ -201,7 +214,7 @@ list.addEventListener("click", (event) => {
     } else if (userClickedOn.className == "btn btn-warning") {
       edit();
     } else if (userClickedOn.className == "btn btn-success") {
-      save();
+      save(indexLocation);
     }
   } else if (userClickedOn.tagName == "SPAN") {
     let strike = userClickedOn;
