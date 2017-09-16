@@ -154,7 +154,22 @@ function saveBtn(liItem) {
   return saveBtn;
 };
 
-//Event listner for remove or strikethrough on list item
+//function to remove list item from localStorage
+function removeFromStorage(item) {
+  for(let i = 0 ; i < listItems.length; i++){
+    if(listItems[i] === item){
+      listItems.splice(i,1);
+      localStorage.setItem('listItems', JSON.stringify(listItems));
+      indexLocation = i;
+    }
+  }
+}
+function addToStorage(item){
+  listItems.splice(indexLocation, 0, item);
+  localStorage.setItem('listItems', JSON.stringify(listItems));
+}
+
+//Event listner for remove/edit or strikethrough on list item
 list.addEventListener("click", (event) => {
   event.preventDefault();
   const userClickedOn = event.target;
@@ -168,14 +183,7 @@ list.addEventListener("click", (event) => {
       let checkMark = userClickedOn.parentNode.previousSibling;
       ul.removeChild(li);
       ul.removeChild(checkMark);
-
-      for(let i = 0 ; i < listItems.length; i++){
-        if(listItems[i] === li.firstElementChild.textContent){
-          listItems.splice(i,1);
-          localStorage.setItem('listItems', JSON.stringify(listItems));
-        }
-      }
-
+      removeFromStorage(li.firstElementChild.textContent);
     }
 
     function edit() {
@@ -208,8 +216,7 @@ list.addEventListener("click", (event) => {
       let span = document.createElement("span");
       let input = li.firstElementChild;
       span.textContent = input.value;
-      listItems.splice(indexLocation, 0, span.textContent); //insert edited list Item into array
-      localStorage.setItem('listItems', JSON.stringify(listItems)); //store newly array replaces old array
+      addToStorage(span.textContent);//adds edited item to localStorage
       li.insertBefore(span, input);
       li.removeChild(input);
       const saveBtn = document.getElementsByClassName("btn btn-success")[0];
@@ -228,9 +235,11 @@ list.addEventListener("click", (event) => {
     if (strike.style.textDecoration === "none" || strike.style.textDecoration === "") {
       strike.style.textDecoration = "line-through";
       strike.parentNode.previousSibling.style.visibility = "visible";
+      removeFromStorage(strike.textContent);
     } else {
       strike.style.textDecoration = "none";
       strike.parentNode.previousSibling.style.visibility = "hidden";
+      addToStorage(strike.textContent);
     }
   }
 });
